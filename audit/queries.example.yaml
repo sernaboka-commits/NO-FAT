@@ -1,0 +1,53 @@
+# Пример конфига замера SoV для sov_measure.py
+# Скопируйте в queries.yaml и заполните под категорию клиента.
+
+category: "протеин (спортивное питание)"
+runs_per_query: 5   # повторов на каждый запрос на каждой модели (пилот: 5, продакшен: 10+)
+
+# Бренды: первый — клиент, остальные — конкуренты.
+# aliases — все написания, по которым ищем упоминание (кириллица/латиница, сокращения).
+brands:
+  - name: "БрендХ"
+    aliases: ["БрендХ", "BrandX", "Бренд Икс"]
+    is_client: true
+  - name: "Конкурент1"
+    aliases: ["Конкурент1", "Competitor One"]
+  - name: "Конкурент2"
+    aliases: ["Конкурент2", "CompTwo"]
+
+# Модели. api = openai | gigachat.
+#   openai  — любой OpenAI-совместимый endpoint (OpenAI, YandexGPT через
+#             https://llm.api.cloud.yandex.net/v1, OpenRouter и т.п.)
+#   gigachat — REST API Сбера (OAuth по ключу авторизации).
+# Ключи берутся из переменных окружения, названных в key_env.
+models:
+  - id: "yandexgpt"
+    api: openai
+    base_url: "https://llm.api.cloud.yandex.net/v1"
+    model: "gpt://<FOLDER_ID>/yandexgpt/latest"   # подставьте свой folder_id
+    key_env: "YANDEX_API_KEY"
+  - id: "gigachat"
+    api: gigachat
+    model: "GigaChat"
+    key_env: "GIGACHAT_AUTH_KEY"   # Authorization key (base64) из личного кабинета
+  - id: "openai"
+    api: openai
+    base_url: "https://api.openai.com/v1"
+    model: "gpt-5"
+    key_env: "OPENAI_API_KEY"
+
+# Пул запросов. type: category | scenario | comparison | brand
+# Формулировки разговорные, как пишут в чат. Вариации — отдельные строки.
+queries:
+  - text: "Какой протеин лучше купить?"
+    type: category
+  - text: "Посоветуй хороший протеин, что сейчас берут?"
+    type: category
+  - text: "Посоветуй протеин для набора массы новичку, бюджет до 3000 рублей"
+    type: scenario
+  - text: "Какой протеин взять девушке для похудения?"
+    type: scenario
+  - text: "БрендХ или Конкурент1 — что лучше по качеству?"
+    type: comparison
+  - text: "Стоит ли покупать протеин БрендХ? Какие у него минусы?"
+    type: brand
